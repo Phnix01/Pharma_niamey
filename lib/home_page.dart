@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,30 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late String todayKey;
-
-  @override
-  void initState() {
-    super.initState();
-    todayKey = DateFormat('yyyy-MM-dd').format(DateTime.now());
-  }
-
-  Future<List<Map<String, dynamic>>> fetchPharmacies() async {
-    final doc = await FirebaseFirestore.instance
-        .collection('pharmacies_de_garde')
-        .doc(todayKey)
-        .get();
-
-    if (doc.exists && doc.data() != null) {
-      final data = doc.data()!;
-      final List pharmacies = data['pharmacies'] ?? [];
-      return pharmacies.cast<Map<String, dynamic>>();
-    } else {
-      return [];
-    }
-  }
-
-  void _launchMap(String url) async {
+  void _launchMap(String url, BuildContext context) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
@@ -49,56 +25,74 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Pharmacies de Garde',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
+        title: const Text('Pharmacies de Garde'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.green,
         elevation: 1,
+        centerTitle: true,
       ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: fetchPharmacies(),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('pharmacies_de_garde')
+            .orderBy(FieldPath.documentId, descending: true)
+            .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (!snapshot.hasData)
             return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(
-              child: Text('Erreur ou aucune donnée trouvée.'),
-            );
-          }
 
-          final pharmacies = snapshot.data!;
-          if (pharmacies.isEmpty) {
-            return const Center(
-              child: Text('Aucune pharmacie de garde aujourd\'hui.'),
-            );
+          final docs = snapshot.data!.docs;
+
+          if (docs.isEmpty) {
+            return const Center(child: Text('Aucune donnée disponible.'));
           }
 
           return ListView.builder(
-            itemCount: pharmacies.length,
+            itemCount: docs.length,
             itemBuilder: (context, index) {
-              final pharmacy = pharmacies[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 2,
-                child: ListTile(
-                  title: Text(pharmacy['nom']),
-                  subtitle: Text(
-                    '${pharmacy['quartier']} • ${pharmacy['adresse']}',
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.map, color: Colors.green),
-                    onPressed: () => _launchMap(pharmacy['map_url']),
-                  ),
-                  leading: pharmacy['est_ouverte_24h'] == true
-                      ? const Icon(Icons.access_time, color: Colors.orange)
-                      : null,
+              final data = docs[index].data() as Map<String, dynamic>;
+              final semaine = data['semaine'] ?? 'Semaine inconnue';
+              final pharmacies = List<Map<String, dynamic>>.from(
+                data['pharmacies'] ?? [],
+              );
+
+              return Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '📅 $semaine',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    ...pharmacies.map(
+                      (p) => Card(
+                        margin: const EdgeInsets.symmetric(vertical: 6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 2,
+                        child: ListTile(
+                          title: Text(p['nom']),
+                          subtitle: Text('${p['quartier']} • ${p['adresse']}'),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.map, color: Colors.green),
+                            onPressed: () => _launchMap(p['map_url'], context),
+                          ),
+                          leading: p['est_ouverte_24h'] == true
+                              ? const Icon(
+                                  Icons.access_time,
+                                  color: Colors.orange,
+                                )
+                              : null,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               );
             },
