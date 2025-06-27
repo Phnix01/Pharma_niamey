@@ -34,17 +34,24 @@ class _HomePageState extends State<HomePage> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('pharmacies_de_garde')
-            .orderBy(FieldPath.documentId, descending: true)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            return const Center(child: CircularProgressIndicator());
-
-          final docs = snapshot.data!.docs;
-
-          if (docs.isEmpty) {
-            return const Center(child: Text('Aucune donnée disponible.'));
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(color: Colors.green),
+            );
           }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(
+              child: Column(
+                children: [
+                  Icon(Icons.warning, size: 30, color: Colors.red),
+                  Text("Aucune donnée disponible"),
+                ],
+              ),
+            );
+          }
+          final docs = snapshot.data!.docs;
 
           return ListView.builder(
             itemCount: docs.length,
