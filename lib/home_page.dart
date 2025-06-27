@@ -37,15 +37,8 @@ class _HomePageState extends State<HomePage> {
             .orderBy(FieldPath.documentId, descending: true)
             .snapshots(),
         builder: (context, snapshot) {
-          // if (snapshot.connectionState == "waiting") {}
           if (!snapshot.hasData)
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.green,
-                semanticsLabel: "Chargement encours",
-                backgroundColor: Colors.amber,
-              ),
-            );
+            return const Center(child: CircularProgressIndicator());
 
           final docs = snapshot.data!.docs;
 
@@ -85,7 +78,10 @@ class _HomePageState extends State<HomePage> {
                         elevation: 2,
                         child: ListTile(
                           title: Text(p['nom']),
-                          subtitle: Text('${p['quartier']} • ${p['adresse']}'),
+                          subtitle: Text(
+                            '${p['quartier']} • ${p['commune']}',
+                            style: const TextStyle(fontSize: 13),
+                          ),
                           trailing: IconButton(
                             icon: const Icon(Icons.map, color: Colors.green),
                             onPressed: () => _launchMap(p['map_url'], context),
