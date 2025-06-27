@@ -37,8 +37,15 @@ class _HomePageState extends State<HomePage> {
             .orderBy(FieldPath.documentId, descending: true)
             .snapshots(),
         builder: (context, snapshot) {
+          // if (snapshot.connectionState == "waiting") {}
           if (!snapshot.hasData)
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.green,
+                semanticsLabel: "Chargement encours",
+                backgroundColor: Colors.amber,
+              ),
+            );
 
           final docs = snapshot.data!.docs;
 
