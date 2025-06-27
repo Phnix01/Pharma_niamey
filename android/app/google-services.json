@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1044645238863",
+    "project_id": "pharma-niamey",
+    "storage_bucket": "pharma-niamey.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1044645238863:android:54822461044c15f843323a",
+        "android_client_info": {
+          "package_name": "com.example.pharma_niamey"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5w8ut5y1QM_acTeT8f9Crx5Q-j1bCOOw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
