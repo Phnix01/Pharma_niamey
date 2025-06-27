@@ -53,59 +53,149 @@ class _HomePageState extends State<HomePage> {
           }
           final docs = snapshot.data!.docs;
 
-          return ListView.builder(
-            itemCount: docs.length,
-            itemBuilder: (context, index) {
-              final data = docs[index].data() as Map<String, dynamic>;
-              final semaine = data['semaine'] ?? 'Semaine inconnue';
-              final pharmacies = List<Map<String, dynamic>>.from(
-                data['pharmacies'] ?? [],
-              );
+          return Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: ListView.builder(
+              itemCount: docs.length,
+              itemBuilder: (context, index) {
+                final data = docs[index].data() as Map<String, dynamic>;
+                final semaine = data['semaine'] ?? 'Semaine inconnue';
+                final pharmacies = List<Map<String, dynamic>>.from(
+                  data['pharmacies'] ?? [],
+                );
 
-              return Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '📅 $semaine',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    ...pharmacies.map(
-                      (p) => Card(
-                        margin: const EdgeInsets.symmetric(vertical: 6),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        elevation: 2,
-                        child: ListTile(
-                          title: Text(p['nom']),
-                          subtitle: Text(
-                            '${p['quartier']} • ${p['commune']}',
-                            style: const TextStyle(fontSize: 13),
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.map, color: Colors.green),
-                            onPressed: () => _launchMap(p['map_url'], context),
-                          ),
-                          leading: p['est_ouverte_24h'] == true
-                              ? const Icon(
-                                  Icons.access_time,
-                                  color: Colors.orange,
-                                )
-                              : null,
+                return Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '📅 $semaine',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
+                      const SizedBox(height: 8),
+                      ...pharmacies.map(
+                        (p) => Card(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 16,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 4,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Nom de la pharmacie + badge 24h
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        p['nom'],
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    if (p['est_ouverte_24h'] == true)
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.orange.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          'Ouvert 24h',
+                                          style: TextStyle(
+                                            color: Colors.orange,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+
+                                // Quartier + Commune
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on,
+                                      size: 16,
+                                      color: Colors.grey,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      '${p['quartier']} • ${p['commune']}',
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 6),
+
+                                // Téléphone
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.phone,
+                                      size: 16,
+                                      color: Colors.grey,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      '${p['telephone']}',
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 12),
+
+                                // Bouton vers la carte
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: TextButton.icon(
+                                    onPressed: () =>
+                                        _launchMap(p['map_url'], context),
+                                    icon: const Icon(
+                                      Icons.map,
+                                      color: Colors.green,
+                                    ),
+                                    label: const Text(
+                                      'Voir sur la carte',
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           );
         },
       ),
