@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          elevation: 4,
+                          elevation: 5,
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
-                                      '${p['quartier']} • ${p['commune']}',
+                                      '${p['quartier']} • ${p['Commune']}',
                                       style: const TextStyle(fontSize: 14),
                                     ),
                                   ],
@@ -159,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
-                                      '${p['telephone']}',
+                                      '${p['Téléphone']}',
                                       style: const TextStyle(fontSize: 14),
                                     ),
                                   ],
