@@ -4,6 +4,7 @@ import 'package:pharma_niamey/home_page.dart';
 import 'package:pharma_niamey/models/onboarding_model.dart';
 import 'package:pharma_niamey/screens/onboarding_page.dart';
 import 'package:pharma_niamey/widgets/button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -126,7 +127,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             child: Button(
                               buttonText: "Commencer",
                               buttonColors: Colors.black,
-                              callFunction: () {
+                              callFunction: () async {
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.setBool('firstconnect', true);
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
