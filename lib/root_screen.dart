@@ -11,16 +11,26 @@ class RootScreen extends StatefulWidget {
 }
 
 class _RootScreenState extends State<RootScreen> {
+  bool? firstConnect;
   @override
-  void initState() async {
-    final prefs = await SharedPreferences.getInstance();
-    firstConnect = prefs.getBool('firstconnect')!;
+  void initState() {
+    super.initState();
+    _loadingConnect();
   }
 
-  late bool firstConnect;
+  Future<void> _loadingConnect() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      firstConnect = prefs.getBool('firstconnect') ?? false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return firstConnect ? OnboardingScreen() : HomePage();
+    if (firstConnect == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    return firstConnect == false ? const OnboardingScreen() : const HomePage();
   }
 }
