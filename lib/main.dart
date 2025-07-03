@@ -1,6 +1,7 @@
 import "package:firebase_core/firebase_core.dart";
 import "package:flutter/material.dart";
 import "package:pharma_niamey/home_page.dart";
+import "package:pharma_niamey/screens/onboarding_screens.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +19,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: HomePage());
+    return MaterialApp(home: OnboardingScreen());
   }
 }

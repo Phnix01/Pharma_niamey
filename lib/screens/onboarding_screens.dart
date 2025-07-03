@@ -2,6 +2,8 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:pharma_niamey/home_page.dart';
 import 'package:pharma_niamey/models/onboarding_model.dart';
+import 'package:pharma_niamey/screens/onboarding_page.dart';
+import 'package:pharma_niamey/widgets/button.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -82,7 +84,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   const SizedBox(height: 20),
                   Button(
                     buttonText: "Découvrir",
-                    buttonColors: Colors.black,
+                    buttonColors: Colors.teal,
                     callFunction: () {
                       Navigator.pop(context);
                     },
