@@ -14,13 +14,11 @@ class OnboardingPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ElasticInRight(
-            child: Image.asset(
-              page.imageUrl,
-              width: double.infinity,
-              height: _size.width * 0.9,
-              fit: BoxFit.fitHeight,
-            ),
+          Image.asset(
+            page.imageUrl,
+            width: double.infinity,
+            height: _size.width * 1,
+            fit: BoxFit.fitHeight,
           ),
           Text(
             page.titlePage,

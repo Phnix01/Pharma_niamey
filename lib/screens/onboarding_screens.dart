@@ -18,28 +18,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   List<OnBoardingModel> _page = [
     OnBoardingModel(
-      imageUrl: "assets/images/onboarding_1.png",
-      titlePage: "Exprime ta beauté avec pudeur",
+      imageUrl: "assets/images/slide1.png",
+      titlePage: "Trouver une pharmacie de garde n’a jamais été aussi simple",
       descriptionText:
-          "Découvre une nouvelle manière de t’habiller, avec élégance, respect et authenticité.",
+          "Consultez chaque semaine la liste des pharmacies de garde à Niamey, où que vous soyez.",
     ),
     OnBoardingModel(
-      imageUrl: "assets/images/onboarding_2.png",
-      titlePage: "Trouve ton hijab parfait",
+      imageUrl: "assets/images/slide2_2.png",
+      titlePage: "Des informations fiables et accessibles à tous",
       descriptionText:
-          "Parcourez des centaines de styles sélectionnés avec soin pour toutes les occasions.",
+          "Nous mettons à jour les données régulièrement pour vous garantir un accès rapide et fiable aux soins.",
     ),
     OnBoardingModel(
-      imageUrl: "assets/images/onboarding_3.png",
-      titlePage: "Rejoins une communauté inspirante",
+      imageUrl: "assets/images/slide3.png",
+      titlePage: "Commencez dès maintenant",
       descriptionText:
-          "Plus qu'une boutique, une communauté de femmes fières et engagées. Bienvenue chez toi.",
-    ),
-    OnBoardingModel(
-      imageUrl: "assets/images/onboarding_4_2.png",
-      titlePage: "Livraison Rapide et Professionnelle",
-      descriptionText:
-          "Plus qu'une boutique, une communauté de femmes fières et engagées. Bienvenue chez toi.",
+          "Localisez, contactez et trouvez facilement une pharmacie ouverte, 24h/24, en quelques clics.",
     ),
   ];
 
@@ -47,7 +41,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showWelcomeDialog();
+      // _showWelcomeDialog();
     });
   }
 
