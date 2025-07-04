@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -24,16 +25,13 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF6F7FB),
       appBar: AppBar(
-        title: const Text(
-          'Pharmacies de Garde',
-          softWrap: true,
-          textAlign: TextAlign.justify,
-        ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.green,
-        elevation: 1,
+        title: const Text('Pharmacies de Garde'),
         centerTitle: true,
+        elevation: 0.5,
+        backgroundColor: Colors.white,
+        foregroundColor: Color(0xFF03A6A1),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -41,165 +39,160 @@ class _HomePageState extends State<HomePage> {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(color: Colors.green),
+            return const Center(
+              child: CircularProgressIndicator(color: Color(0xFF03A6A1)),
             );
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(
+            return const Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.warning, size: 30, color: Colors.red),
-                  Text("Aucune donnée disponible"),
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    size: 40,
+                    color: Colors.red,
+                  ),
+                  SizedBox(height: 12),
+                  Text("Aucune donnée disponible pour l’instant"),
                 ],
               ),
             );
           }
+
           final docs = snapshot.data!.docs;
 
-          return Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: ListView.builder(
-              itemCount: docs.length,
-              itemBuilder: (context, index) {
-                final data = docs[index].data() as Map<String, dynamic>;
-                final semaine = data['semaine'] ?? 'Semaine inconnue';
-                final pharmacies = List<Map<String, dynamic>>.from(
-                  data['pharmacies'] ?? [],
-                );
+          return ListView.separated(
+            padding: const EdgeInsets.all(16),
+            separatorBuilder: (_, __) => const SizedBox(height: 16),
+            itemCount: docs.length,
+            itemBuilder: (context, index) {
+              final data = docs[index].data() as Map<String, dynamic>;
+              final semaine = data['semaine'] ?? 'Semaine inconnue';
+              final pharmacies = List<Map<String, dynamic>>.from(
+                data['pharmacies'] ?? [],
+              );
 
-                return Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '📅 $semaine',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '📅 $semaine',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ...pharmacies.map(
+                    (p) => Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 8),
-                      ...pharmacies.map(
-                        (p) => Card(
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 16,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          elevation: 5,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Nom de la pharmacie + badge 24h
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        p['nom'],
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    if (p['est_ouverte_24h'] == true)
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.orange.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          'Ouvert 24h',
-                                          style: TextStyle(
-                                            color: Colors.orange,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  p['nom'],
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                const SizedBox(height: 8),
-
-                                // Quartier + Commune
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.location_on,
-                                      size: 16,
-                                      color: Colors.grey,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      '${p['quartier']} • ${p['Commune']}',
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-
-                                const SizedBox(height: 6),
-
-                                // Téléphone
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.phone,
-                                      size: 16,
-                                      color: Colors.grey,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      '${p['Téléphone']}',
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-
-                                const SizedBox(height: 12),
-
-                                // Bouton vers la carte
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: TextButton.icon(
-                                    onPressed: () =>
-                                        _launchMap(p['map_url'], context),
-                                    icon: const Icon(
-                                      Icons.map,
-                                      color: Colors.green,
-                                    ),
-                                    label: const Text(
-                                      'Voir sur la carte',
-                                      style: TextStyle(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                              ),
+                              if (p['est_ouverte_24h'] == true)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.shade50,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: const Text(
+                                    'Ouvert 24h',
+                                    style: TextStyle(
+                                      color: Colors.orange,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ),
-                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              const Icon(
+                                CupertinoIcons.placemark,
+                                size: 18,
+                                color: Colors.grey,
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  '${p['quartier']} • ${p['Commune']}',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              const Icon(
+                                CupertinoIcons.phone,
+                                size: 18,
+                                color: Colors.grey,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                '${p['Téléphone']}',
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton.icon(
+                              onPressed: () =>
+                                  _launchMap(p['map_url'], context),
+                              icon: const Icon(
+                                CupertinoIcons.map_pin_ellipse,
+                                color: Color(0xFF03A6A1),
+                              ),
+                              label: const Text(
+                                'Voir sur la carte',
+                                style: TextStyle(
+                                  color: Color(0xFF03A6A1),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                );
-              },
-            ),
+                ],
+              );
+            },
           );
         },
       ),
