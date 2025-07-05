@@ -32,6 +32,9 @@ class _HomePageState extends State<HomePage> {
         elevation: 0.5,
         backgroundColor: Colors.white,
         foregroundColor: Color(0xFF03A6A1),
+        actions: [
+          IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
