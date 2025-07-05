@@ -18,7 +18,8 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.example.pharma_niamey"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -55,7 +56,12 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
+    
 }
+dependencies {
+    implementation("com.google.android.material:material:1.11.0")
+}
+
 
 flutter {
     source = "../.."
