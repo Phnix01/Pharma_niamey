@@ -46,13 +46,16 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 10),
             const Text(
-              "Lead by Omar Farouk",
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              "by Omar Farouk",
+              style: TextStyle(fontSize: 12, color: Colors.white70),
             ),
             const Text(
               "Powered by XNOVA Systems",
               style: TextStyle(fontSize: 14, color: Colors.white),
             ),
+
+            const SizedBox(height: 30),
+            CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
           ],
         ),
       ),
