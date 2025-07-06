@@ -33,7 +33,10 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         foregroundColor: Color(0xFF03A6A1),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
+          IconButton(
+            onPressed: () {},
+            icon: Badge(label: Text("4"), child: Icon(Icons.notifications)),
+          ),
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
