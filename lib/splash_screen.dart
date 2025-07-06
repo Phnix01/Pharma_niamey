@@ -13,7 +13,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 5), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const RootScreen()),
@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFF03A6A1),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -41,13 +41,17 @@ class _SplashScreenState extends State<SplashScreen> {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF03A6A1),
+                color: Color.fromARGB(255, 255, 255, 255),
               ),
             ),
             const SizedBox(height: 10),
             const Text(
-              "Powered by XNova Systems",
+              "Lead by Omar Farouk",
               style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+            const Text(
+              "Powered by XNOVA Systems",
+              style: TextStyle(fontSize: 14, color: Colors.white),
             ),
           ],
         ),

@@ -3,6 +3,7 @@ import "package:flutter/material.dart";
 import "package:pharma_niamey/home_page.dart";
 import "package:pharma_niamey/root_screen.dart";
 import "package:pharma_niamey/screens/onboarding_screens.dart";
+import "package:pharma_niamey/splash_screen.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +21,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: RootScreen(), debugShowCheckedModeBanner: false);
+    return MaterialApp(home: SplashScreen(), debugShowCheckedModeBanner: false);
   }
 }
