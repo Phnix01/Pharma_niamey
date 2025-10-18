@@ -12,6 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final Color primaryColor = const Color(0xFF00BFA6);
+  final Color accentColor = const Color(0xFF00D4B4);
 
   void _launchMap(String? url, BuildContext context) async {
     if (url == null || url.isEmpty) {
@@ -38,115 +39,168 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildPharmacyCard(Map<String, dynamic> p, BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+    return GestureDetector(
+      onTapDown: (_) => FocusScope.of(context).unfocus(),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Colors.white, Color(0xFFF9FFFD)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  p['nom'] ?? 'Pharmacie inconnue',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(18),
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  CupertinoIcons.capsule,
+                  color: Color(0xFF00BFA6),
+                  size: 26,
                 ),
-              ),
-              if (p['est_ouverte_24h'] == true)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.shade50,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Text(
-                    'Ouvert 24h',
-                    style: TextStyle(
-                      color: Colors.orange,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    p['nom'] ?? 'Pharmacie inconnue',
+                    style: const TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1C1C1E),
                     ),
                   ),
                 ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              const Icon(
-                CupertinoIcons.placemark,
-                size: 18,
-                color: Colors.grey,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  '${p['quartier'] ?? 'Quartier inconnu'} • ${p['Commune'] ?? 'Commune inconnue'}',
-                  style: const TextStyle(fontSize: 14),
+                if (p['est_ouverte_24h'] == true)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.green.shade200),
+                    ),
+                    child: const Text(
+                      '24h/24',
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Adresse
+            Row(
+              children: [
+                Icon(
+                  CupertinoIcons.location_solid,
+                  color: Colors.grey.shade600,
+                  size: 18,
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Row(
-            children: [
-              const Icon(CupertinoIcons.phone, size: 18, color: Colors.grey),
-              const SizedBox(width: 6),
-              Text(
-                p['Téléphone'] ?? 'Non communiqué',
-                style: const TextStyle(fontSize: 14),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton.icon(
-              onPressed: () => _launchMap(p['map_url'], context),
-              icon: Icon(CupertinoIcons.map_pin_ellipse, color: primaryColor),
-              label: Text(
-                'Voir sur la carte',
-                style: TextStyle(
-                  color: primaryColor,
-                  fontWeight: FontWeight.w600,
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    '${p['quartier'] ?? 'Quartier inconnu'} • ${p['Commune'] ?? 'Commune inconnue'}',
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+
+            // Téléphone
+            Row(
+              children: [
+                Icon(
+                  CupertinoIcons.phone_fill,
+                  color: Colors.grey.shade600,
+                  size: 18,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  p['Téléphone'] ?? 'Non communiqué',
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Bouton
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 0,
+                ),
+                onPressed: () => _launchMap(p['map_url'], context),
+                icon: const Icon(CupertinoIcons.map_pin_ellipse),
+                label: const Text(
+                  'Voir sur la carte',
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
+  // ───────────────────────────────────────────────
+  // BUILD
+  // ───────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
       appBar: AppBar(
-        title: const Text('Pharmacies de Garde'),
-        centerTitle: true,
-        elevation: 1,
+        elevation: 0,
         backgroundColor: Colors.white,
-        foregroundColor: primaryColor,
+        centerTitle: true,
+        title: Column(
+          children: const [
+            Text(
+              'PharmaYami',
+              style: TextStyle(
+                color: Color(0xFF00BFA6),
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            Text(
+              'Pharmacies de garde à Niamey',
+              style: TextStyle(color: Colors.black54, fontSize: 12),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             onPressed: () {},
