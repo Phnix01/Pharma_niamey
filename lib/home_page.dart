@@ -10,9 +10,9 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   final Color primaryColor = const Color(0xFF00BFA6);
-  final Color accentColor = const Color(0xFF00D4B4);
 
   void _launchMap(String? url, BuildContext context) async {
     if (url == null || url.isEmpty) {
@@ -39,8 +39,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildPharmacyCard(Map<String, dynamic> p, BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => FocusScope.of(context).unfocus(),
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 500),
+      tween: Tween(begin: 0, end: 1),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) => Opacity(
+        opacity: value,
+        child: Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: child,
+        ),
+      ),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
@@ -174,30 +183,72 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // ───────────────────────────────────────────────
-  // BUILD
-  // ───────────────────────────────────────────────
+  Widget _buildWeekHeader(String semaine) {
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 600),
+      tween: Tween(begin: 0, end: 1),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) => Opacity(
+        opacity: value,
+        child: Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: child,
+        ),
+      ),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE7FAF6),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFB2F0E1), width: 1),
+        ),
+        child: Row(
+          children: [
+            const Icon(
+              CupertinoIcons.calendar_today,
+              color: Color(0xFF00BFA6),
+              size: 18,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              semaine,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF007A6E),
+                letterSpacing: 0.3,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
       appBar: AppBar(
-        elevation: 0,
+        elevation: 4,
+        shadowColor: Colors.black.withOpacity(0.1),
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Column(
           children: const [
             Text(
-              'PharmaYami',
+              'Pharma Niamey',
               style: TextStyle(
                 color: Color(0xFF00BFA6),
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 21,
+                letterSpacing: 0.5,
               ),
             ),
             Text(
               'Pharmacies de garde à Niamey',
-              style: TextStyle(color: Colors.black54, fontSize: 12),
+              style: TextStyle(color: Colors.black54, fontSize: 13),
             ),
           ],
         ),
@@ -257,14 +308,7 @@ class _HomePageState extends State<HomePage> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '📅 $semaine',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black87,
-                    ),
-                  ),
+                  _buildWeekHeader(semaine),
                   const SizedBox(height: 8),
                   ...pharmacies.map((p) => _buildPharmacyCard(p, context)),
                 ],
