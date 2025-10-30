@@ -38,6 +38,10 @@ class _HomePageState extends State<HomePage>
     }
   }
 
+  void _launchPhone(String? phoneNumber, BuildContext context) async {
+    if (phoneNumber == null || phoneNumber.isEmpty) {}
+  }
+
   Widget _buildPharmacyCard(Map<String, dynamic> p, BuildContext context) {
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 500),
