@@ -64,15 +64,20 @@ class _HomePageState extends State<HomePage>
   void _showSnackBar(BuildContext context, String message, Color? color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          message,
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+        backgroundColor: color,
+        content: Row(
+          children: [
+            Icon(
+              color == Colors.red ? Icons.error_outline : Icons.check_circle,
+              color: Colors.white,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Expanded(child: Text(message)),
+          ],
         ),
-        backgroundColor: color!,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
