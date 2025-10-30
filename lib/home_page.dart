@@ -13,15 +13,26 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   final Color primaryColor = const Color(0xFF00BFA6);
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   void _launchMap(String? url, BuildContext context) async {
     if (url == null || url.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.red,
-          content: Text("Lien de localisation indisponible."),
-        ),
-      );
+      _showSnackBar(context, "Lien de localisation indisponible.", Colors.red);
       return;
     }
 
@@ -29,27 +40,20 @@ class _HomePageState extends State<HomePage>
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.red,
-          content: Text("Impossible d'ouvrir la carte."),
-        ),
-      );
+      _showSnackBar(context, "Impossible d'ouvrir la carte.", Colors.red);
     }
   }
 
   void _launchPhone(String? phoneNumber, BuildContext context) async {
     if (phoneNumber == null || phoneNumber.isEmpty) {
-      _showSnackBar(
-        context,
-        "Impossible d'ouvrir l'application téléphone.",
-        Colors.red,
-      );
+      _showSnackBar(context, "Numéro de téléphone indisponible.", Colors.red);
+      return;
     }
 
     // Nettoyer le numéro de téléphone
-    final cleanedNumber = phoneNumber?.replaceAll(RegExp(r'[^\d+]'), '');
+    final cleanedNumber = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
     final uri = Uri.parse('tel:$cleanedNumber');
+
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {
@@ -61,7 +65,7 @@ class _HomePageState extends State<HomePage>
     }
   }
 
-  void _showSnackBar(BuildContext context, String message, Color? color) {
+  void _showSnackBar(BuildContext context, String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: color,
@@ -94,134 +98,227 @@ class _HomePageState extends State<HomePage>
           child: child,
         ),
       ),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Colors.white, Color(0xFFF9FFFD)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Colors.white, Color(0xFFF9FFFD)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          ],
-        ),
-        padding: const EdgeInsets.all(18),
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(
-                  CupertinoIcons.capsule,
-                  color: Color(0xFF00BFA6),
-                  size: 26,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    p['nom'] ?? 'Pharmacie inconnue',
-                    style: const TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1C1C1E),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header avec badge 24h
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: primaryColor.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      CupertinoIcons.capsule,
+                      color: Color(0xFF00BFA6),
+                      size: 24,
                     ),
                   ),
-                ),
-                if (p['est_ouverte_24h'] == true)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          p['nom'] ?? 'Pharmacie inconnue',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1C1C1E),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        if (p['est_ouverte_24h'] == true)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.green.shade400,
+                                  Colors.green.shade600,
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(
+                                  Icons.access_time,
+                                  color: Colors.white,
+                                  size: 12,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  '24h/24',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
                     ),
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade50,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.green.shade200),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Informations de contact
+              _buildInfoRow(
+                icon: CupertinoIcons.location_solid,
+                text:
+                    '${p['quartier'] ?? 'Quartier inconnu'} • ${p['Commune'] ?? 'Commune inconnue'}',
+                onTap: () => _launchMap(p['map_url'], context),
+                isClickable: p['map_url'] != null && p['map_url'].isNotEmpty,
+              ),
+              const SizedBox(height: 8),
+
+              _buildInfoRow(
+                icon: CupertinoIcons.phone_fill,
+                text: p['Téléphone'] ?? 'Non communiqué',
+                onTap: () => _launchPhone(p['Téléphone'], context),
+                isClickable:
+                    p['Téléphone'] != null && p['Téléphone'].isNotEmpty,
+              ),
+              const SizedBox(height: 16),
+
+              // Boutons d'action
+              Row(
+                children: [
+                  // Bouton Appeler
+                  if (p['Téléphone'] != null && p['Téléphone'].isNotEmpty)
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 2,
+                        ),
+                        onPressed: () => _launchPhone(p['Téléphone'], context),
+                        icon: const Icon(Icons.phone, size: 18),
+                        label: const Text(
+                          'Appeler',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ),
                     ),
-                    child: const Text(
-                      '24h/24',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+
+                  if (p['Téléphone'] != null && p['Téléphone'].isNotEmpty)
+                    const SizedBox(width: 8),
+
+                  // Bouton Localisation
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
+                      ),
+                      onPressed: () => _launchMap(p['map_url'], context),
+                      icon: const Icon(
+                        CupertinoIcons.map_pin_ellipse,
+                        size: 18,
+                      ),
+                      label: const Text(
+                        'Localiser',
+                        style: TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
-              ],
-            ),
-            const SizedBox(height: 12),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-            // Adresse
-            Row(
-              children: [
-                Icon(
-                  CupertinoIcons.location_solid,
-                  color: Colors.grey.shade600,
-                  size: 18,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    '${p['quartier'] ?? 'Quartier inconnu'} • ${p['Commune'] ?? 'Commune inconnue'}',
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+  Widget _buildInfoRow({
+    required IconData icon,
+    required String text,
+    required VoidCallback onTap,
+    required bool isClickable,
+  }) {
+    return GestureDetector(
+      onTap: isClickable ? onTap : null,
+      child: MouseRegion(
+        cursor: isClickable
+            ? SystemMouseCursors.click
+            : SystemMouseCursors.basic,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          decoration: BoxDecoration(
+            color: isClickable
+                ? primaryColor.withOpacity(0.05)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            border: isClickable
+                ? Border.all(color: primaryColor.withOpacity(0.2))
+                : null,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isClickable ? primaryColor : Colors.grey.shade600,
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isClickable ? primaryColor : Colors.grey.shade700,
+                    fontWeight: isClickable
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-
-            // Téléphone
-            Row(
-              children: [
-                Icon(
-                  CupertinoIcons.phone_fill,
-                  color: Colors.grey.shade600,
-                  size: 18,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  p['Téléphone'] ?? 'Non communiqué',
-                  style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Bouton
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryColor,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  elevation: 0,
-                ),
-                onPressed: () => _launchMap(p['map_url'], context),
-                icon: const Icon(CupertinoIcons.map_pin_ellipse),
-                label: const Text(
-                  'Voir sur la carte',
-                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
-            ),
-          ],
+              if (isClickable)
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: primaryColor,
+                  size: 14,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -241,27 +338,58 @@ class _HomePageState extends State<HomePage>
       ),
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0xFFE7FAF6),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFB2F0E1), width: 1),
+          gradient: LinearGradient(
+            colors: [
+              primaryColor.withOpacity(0.1),
+              primaryColor.withOpacity(0.05),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: primaryColor.withOpacity(0.3), width: 1),
         ),
         child: Row(
           children: [
-            const Icon(
-              CupertinoIcons.calendar_today,
-              color: Color(0xFF00BFA6),
-              size: 18,
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: primaryColor,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                CupertinoIcons.calendar_today,
+                color: Colors.white,
+                size: 16,
+              ),
             ),
-            const SizedBox(width: 8),
-            Text(
-              semaine,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF007A6E),
-                letterSpacing: 0.3,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                semaine,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF007A6E),
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Pharmacies de garde',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: primaryColor,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -315,22 +443,35 @@ class _HomePageState extends State<HomePage>
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(color: primaryColor),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: primaryColor),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Chargement des pharmacies...',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
             );
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.warning_amber_rounded,
-                    size: 40,
-                    color: Colors.red,
+                    Icons.local_pharmacy_outlined,
+                    size: 60,
+                    color: primaryColor.withOpacity(0.5),
                   ),
-                  SizedBox(height: 12),
-                  Text("Aucune donnée disponible pour l’instant"),
+                  const SizedBox(height: 16),
+                  Text(
+                    "Aucune pharmacie de garde disponible",
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+                  ),
                 ],
               ),
             );
@@ -353,7 +494,7 @@ class _HomePageState extends State<HomePage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildWeekHeader(semaine),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   ...pharmacies.map((p) => _buildPharmacyCard(p, context)),
                 ],
               );
