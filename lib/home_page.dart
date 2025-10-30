@@ -46,6 +46,19 @@ class _HomePageState extends State<HomePage>
         Colors.red,
       );
     }
+
+    // Nettoyer le numéro de téléphone
+    final cleanedNumber = phoneNumber?.replaceAll(RegExp(r'[^\d+]'), '');
+    final uri = Uri.parse('tel:$cleanedNumber');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      _showSnackBar(
+        context,
+        "Impossible d'ouvrir l'application téléphone.",
+        Colors.red,
+      );
+    }
   }
 
   void _showSnackBar(BuildContext context, String message, Color? color) {
