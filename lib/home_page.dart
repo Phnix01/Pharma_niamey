@@ -39,7 +39,29 @@ class _HomePageState extends State<HomePage>
   }
 
   void _launchPhone(String? phoneNumber, BuildContext context) async {
-    if (phoneNumber == null || phoneNumber.isEmpty) {}
+    if (phoneNumber == null || phoneNumber.isEmpty) {
+      _showSnackBar(
+        context,
+        "Impossible d'ouvrir l'application téléphone.",
+        Colors.red,
+      );
+    }
+  }
+
+  void _showSnackBar(BuildContext context, String message, Color? color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: color!,
+      ),
+    );
   }
 
   Widget _buildPharmacyCard(Map<String, dynamic> p, BuildContext context) {
@@ -323,20 +345,4 @@ class _HomePageState extends State<HomePage>
       ),
     );
   }
-}
-
-_showSnackBar(BuildContext context, String message, Color? color) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        message,
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
-      backgroundColor: color!,
-    ),
-  );
 }
