@@ -324,3 +324,19 @@ class _HomePageState extends State<HomePage>
     );
   }
 }
+
+_showSnackBar(BuildContext context, String message, Color? color) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        message,
+        style: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      backgroundColor: color!,
+    ),
+  );
+}
