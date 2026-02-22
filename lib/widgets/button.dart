@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pharma_niamey/app_theme.dart';
 
 class Button extends StatelessWidget {
   final String buttonText;
@@ -8,7 +9,7 @@ class Button extends StatelessWidget {
     super.key,
     required this.buttonText,
     required this.callFunction,
-    this.buttonColors = Colors.black,
+    this.buttonColors,
   });
 
   @override
@@ -17,15 +18,15 @@ class Button extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: callFunction,
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+          foregroundColor: Colors.white,
+          backgroundColor: buttonColors ?? AppColors.primary,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
         child: Text(
           buttonText,
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-          foregroundColor: Colors.white,
-          backgroundColor: buttonColors,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
     );

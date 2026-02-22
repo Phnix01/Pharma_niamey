@@ -23,6 +23,44 @@
           "other_platform_oauth_client": []
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1044645238863:android:dab0fe5f0220fd0c43323a",
+        "android_client_info": {
+          "package_name": "com.example.pharma_niamey_bckof"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5w8ut5y1QM_acTeT8f9Crx5Q-j1bCOOw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1044645238863:android:704e6dc21ddc042c43323a",
+        "android_client_info": {
+          "package_name": "com.xnovasystems.pharmaniamey"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5w8ut5y1QM_acTeT8f9Crx5Q-j1bCOOw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
     }
   ],
   "configuration_version": "1"

@@ -1,6 +1,7 @@
-import "package:flutter/material.dart";
-import "package:animate_do/animate_do.dart";
-import "package:pharma_niamey/models/onboarding_model.dart";
+import 'package:flutter/material.dart';
+import 'package:animate_do/animate_do.dart';
+import 'package:pharma_niamey/app_theme.dart';
+import 'package:pharma_niamey/models/onboarding_model.dart';
 
 class OnboardingPage extends StatelessWidget {
   final OnBoardingModel page;
@@ -8,7 +9,7 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Size _size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -18,25 +19,28 @@ class OnboardingPage extends StatelessWidget {
             child: Image.asset(
               page.imageUrl,
               width: double.infinity,
-              height: _size.width * 1,
-              fit: BoxFit.fitHeight,
+              height: size.width * 0.75,
+              fit: BoxFit.contain,
             ),
           ),
+          const SizedBox(height: 24),
           Text(
             page.titlePage,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 22,
-              color: Colors.black,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
+              color: AppColors.onSurface,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           FadeIn(
             child: Text(
               page.descriptionText,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: AppColors.textSecondary,
+                height: 1.5,
+              ),
             ),
           ),
         ],

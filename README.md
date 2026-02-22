@@ -74,9 +74,9 @@ lib/
 
 ## 📅 Lancement officiel
 
-- **Date prévue :** 17 novembre 2025  
-- **Cible :** utilisateurs de Niamey (17–65 ans)  
-- **Objectif :** simplifier l’accès aux pharmacies et moderniser l’expérience santé locale  
+- **Date prévue :** Janvier 2026
+- **Cible :** utilisateurs de Niamey (17–65 ans)
+- **Objectif :** simplifier l'accès aux pharmacies et moderniser l'expérience santé locale  
 
 ---
 

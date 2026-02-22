@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyD5w8ut5y1QM_acTeT8f9Crx5Q-j1bCOOw',
-    appId: '1:1044645238863:android:54822461044c15f843323a',
+    appId: '1:1044645238863:android:704e6dc21ddc042c43323a',
     messagingSenderId: '1044645238863',
     projectId: 'pharma-niamey',
     storageBucket: 'pharma-niamey.firebasestorage.app',
@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'pharma-niamey.firebasestorage.app',
     iosBundleId: 'com.example.pharmaNiamey',
   );
+
 }

@@ -1,4 +1,4 @@
-package com.example.pharma_niamey
+package com.xnovasystems.pharmaniamey
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,5 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:pharma_niamey/app_theme.dart';
 import 'package:pharma_niamey/home_page.dart';
 import 'package:pharma_niamey/models/onboarding_model.dart';
 import 'package:pharma_niamey/screens/onboarding_page.dart';
@@ -17,10 +18,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  List<OnBoardingModel> _page = [
+  final List<OnBoardingModel> _page = [
     OnBoardingModel(
       imageUrl: "assets/images/slide1.png",
-      titlePage: "Trouver une pharmacie de garde n’a jamais été aussi simple",
+      titlePage: "Trouver une pharmacie de garde n'a jamais été aussi simple",
       descriptionText:
           "Consultez chaque semaine la liste des pharmacies de garde à Niamey, où que vous soyez.",
     ),
@@ -39,15 +40,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // _showWelcomeDialog();
-    });
-  }
-
-  @override
   void dispose() {
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -60,126 +54,110 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
 
-  void _showWelcomeDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: IntrinsicHeight(
-          child: Stack(
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset("assets/images/welcome_welcome.png"),
-                  const SizedBox(height: 20),
-                  const Text(
-                    "Bienvenue",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-                  Button(
-                    buttonText: "Découvrir",
-                    buttonColors: Colors.teal,
-                    callFunction: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+  Future<void> _completeOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('firstconnect', true);
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomePage()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Scaffold(
-          appBar: AppBar(foregroundColor: Colors.transparent),
-          body: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: PageView.builder(
-                    itemCount: _page.length,
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      setState(() {
-                        _currentPage = index;
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      return OnboardingPage(page: _page[index]);
-                    },
-                  ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          if (_currentPage < _page.length - 1)
+            TextButton(
+              onPressed: _completeOnboarding,
+              child: const Text(
+                'Passer',
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
                 ),
+              ),
+            ),
+        ],
+      ),
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: PageView.builder(
+                itemCount: _page.length,
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentPage = index;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  return OnboardingPage(page: _page[index]);
+                },
+              ),
+            ),
 
-                Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: _currentPage == _page.length - 1
-                        ? ZoomIn(
-                            duration: Duration(seconds: 3),
-                            child: Button(
-                              buttonText: "Commencer",
-                              buttonColors: Colors.black,
-                              callFunction: () async {
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                await prefs.setBool('firstconnect', true);
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomePage(),
-                                  ),
-                                );
-                              },
-                            ),
-                          )
-                        : ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.all(20),
-                              shape: CircleBorder(),
-                            ),
-                            onPressed: _nextPage,
-                            child: Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              size: 35,
-                            ),
-                          ),
+            // Dot indicator animé
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List<Widget>.generate(
+                _page.length,
+                (index) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: _currentPage == index ? 24 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color: _currentPage == index
+                        ? AppColors.primary
+                        : AppColors.primary.withValues(alpha: 0.25),
                   ),
                 ),
-                // maintenant je vais attaquer le dot indicator
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List<Widget>.generate(
-                    _page.length,
-                    (index) => Container(
-                      margin: const EdgeInsets.all(4),
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _currentPage == index
-                            ? Colors.black
-                            : Colors.grey,
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Bouton suivant / commencer
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: _currentPage == _page.length - 1
+                  ? ZoomIn(
+                      duration: const Duration(milliseconds: 600),
+                      child: Button(
+                        buttonText: "Commencer",
+                        buttonColors: AppColors.primary,
+                        callFunction: _completeOnboarding,
+                      ),
+                    )
+                  : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.all(20),
+                        shape: const CircleBorder(),
+                      ),
+                      onPressed: _nextPage,
+                      child: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 28,
                       ),
                     ),
-                  ),
-                ),
-
-                // bouton suivant/ commencer
-              ],
             ),
-          ),
+
+            const SizedBox(height: 32),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

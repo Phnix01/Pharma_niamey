@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pharma_niamey/app_theme.dart';
 import 'package:pharma_niamey/home_page.dart';
 import 'package:pharma_niamey/screens/onboarding_screens.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +29,7 @@ class _RootScreenState extends State<RootScreen> {
   @override
   Widget build(BuildContext context) {
     if (firstConnect == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: CircularProgressIndicator(color: AppColors.primary)));
     }
 
     return firstConnect == false ? const OnboardingScreen() : const HomePage();
